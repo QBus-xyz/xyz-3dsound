@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.spatial.min.js" type="text/javascript"></script>
+        <script>
+            var players = {};
+            window.addEventListener('message', function(event) {
+                if (event.data.submissionType == "sendSound") {
+                    var i = event.data.soundIndex;
+                    players[i] = new Howl({src: ["./sounds/" + event.data.submissionFile]});
+                    players[i].volume(event.data.volume);
+                    players[i].play();
+                    players[i].pannerAttr({
+                        panningModel: 'HRTF',
+                        rolloffFactor: 2,
+                        distanceModel: 'linear',
+                        maxDistance:1000
+                    });
+                    players[i].pos(event.data.pos.x, event.data.pos.y, event.data.pos.z);
+                    players[i].on('end',function(){
+                        $.post('https://xyz-3dsound/discardSound',JSON.stringify({index:i}));
+                    });
+                } else if(event.data.submissionType == "updateVolume") {
+                    var i = event.data.soundIndex;
+                    players[i].volume(event.data.volume);
+                    Howler.pos(event.data.playerPos.x, event.data.playerPos.y, event.data.playerPos.z);
+                    Howler.orientation(event.data.camDir.x, event.data.camDir.y, event.data.camDir.z,0,0,1);
+                } else if(event.data.submissionType == "pause") {
+                    var i = event.data.soundIndex;
+                    players[i].pause();
+                } else if(event.data.submissionType == "resume") {
+                    var i = event.data.soundIndex;
+                    players[i].play();
+                } else if(event.data.submissionType == "updateCoords") {
+                    var i = event.data.soundIndex;
+                    players[i].pos(event.data.pos.x, event.data.pos.y, event.data.pos.z);
+                } else if(event.data.submissionType == "stop") {
+                    var i = event.data.soundIndex;
+                    players[i].stop();
+                    players[i] = undefined;
+                    $.post('https://xyz-3dsound/discardSound',JSON.stringify({index:i}));
+                }
+            });
+        </script>
+    </head>
+</html>
