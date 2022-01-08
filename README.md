@@ -11,7 +11,7 @@ All of the interactions with this resource can be made through server-side expor
 [Youtube](https://www.youtube.com/watch?v=IOE3tu6epcA)
 
 ##### Qbus.xyz Discord:
-[Discord](https://discord.gg/Gec9kBKwcB)
+[Discord](https://discord.gg/jTsrKaV6As)
 
 ##### Starting a sound source:
 ```lua
